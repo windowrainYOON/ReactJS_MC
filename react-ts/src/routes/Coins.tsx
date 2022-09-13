@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { fetchCoins } from "../api";
 
 const Container = styled.div`
   max-width: 480px;
@@ -38,7 +39,7 @@ font-size: 48px;
   color: ${props => props.theme.accentColor}
 `;
 
-interface CoinInterface {
+interface ICoin {
   id: string;
   name: string;
   symbol: string;
@@ -47,36 +48,6 @@ interface CoinInterface {
   is_active: boolean;
   type: string;
 }
-
-/* const coins = [
-  {
-    id: "btc-bitcoin",
-    name: "Bitcoin",
-    symbol: "BTC",
-    rank: 1,
-    is_new: false,
-    is_active: true,
-    type: "coin",
-  },
-  {
-    id: "eth-ethereum",
-    name: "Ethereum",
-    symbol: "ETH",
-    rank: 2,
-    is_new: false,
-    is_active: true,
-    type: "coin",
-  },
-  {
-    id: "hex-hex",
-    name: "HEX",
-    symbol: "HEX",
-    rank: 3,
-    is_new: false,
-    is_active: true,
-    type: "token",
-  },
-]; */
 
 const Loader = styled.span`
   text-align: center;
@@ -90,25 +61,17 @@ const Img = styled.img`
 
 
 function Coins(){
-  const [coins, setCoins] = useState<CoinInterface[]>([]);
-  const [loading, setLoading] = useState(true);
-  useEffect(()=>{
-    (async()=>{
-      const response = await fetch("https://api.coinpaprika.com/v1/coins");
-      const json = await response.json();
-      setCoins(json.slice(0, 100));
-      setLoading(false);
-    })();
-  }, []);
+  const {isLoading, data} = useQuery<ICoin[]>("allCoins", fetchCoins);
+
   return (
     <Container>
       <Header>
         <Title>코인</Title>
       </Header>
-      {loading ? (
+      {isLoading ? (
         <Loader>Loading...</Loader>
       ) : <CoinsList>
-        {coins.map(coin => 
+        {data?.slice(0, 100).map(coin => 
           <Coin key={coin.id}>
             <Link to={`/${coin.id}`} state={{name:coin.name, rank:coin.rank}}>
               <Img src={`https://cryptocurrencyliveprices.com/img/${coin.id}.png`}/>
