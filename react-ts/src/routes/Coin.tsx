@@ -144,19 +144,6 @@ function Coin(){
   const chartMatch = useMatch(`/:coinId/chart`);
   const {isLoading:infoLoading, data:infoData} = useQuery<IInfoData>(["info", coinId], () => fetchCoinInfo(coinId));
   const {isLoading:tickersLoading, data:tickersData} = useQuery<IPriceData>(["tickers", coinId], () => fetchCoinTickers(coinId), {refetchInterval:5000,});
-  /* const [loading, setLoading] = useState(true);
-  const [info, setInfo] = useState<IInfoData>();
-  const [priceInfo, setPriceInfo] = useState<IPriceData>();
-
-  useEffect(()=> {
-    (async()=>{
-      const infoData = await (await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)).json();
-      const priceData = await (await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)).json();
-      setInfo(infoData);
-      setPriceInfo(priceData);
-      setLoading(false);
-    })();
-  }, [coinId]); */
   const loading = infoLoading || tickersLoading
   return (
     <Container>
@@ -184,7 +171,7 @@ function Coin(){
             </OverviewItem>
             <OverviewItem>
               <span>Price</span>
-              <span>{tickersData?.quotes.USD.price.toFixed(3)}</span>
+              <span>{tickersData?.quotes?.USD?.price?.toFixed(3)}</span>
             </OverviewItem>
           </Overview>
           <Description>{infoData?.description}</Description>
