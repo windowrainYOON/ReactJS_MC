@@ -1,6 +1,23 @@
-import { atom, selector } from "recoil"
+import { atom, selector } from "recoil";
 
-export const toDoState = atom({
+export enum Icons {
+  Delete = "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0"
+}
+
+export interface IToDo {
+  id:number;
+  text:string;
+}
+
+interface IToDoState {
+  [key: string] : IToDo[];
+}
+
+export const toDoState = atom<IToDoState>({
   key:"toDo",
-  default: ["a", "b", "c", "d", "e", "f"],
+  default: {
+    "활동" : [],
+    "비활동" : [],
+    "졸업" : [],
+  },
 })
