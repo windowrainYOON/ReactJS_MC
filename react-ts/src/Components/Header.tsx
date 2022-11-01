@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import {motion} from "framer-motion";
+import { motion, useAnimation, useScroll } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useMatch } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Nav = styled(motion.nav)`
   display: flex;
@@ -11,7 +11,6 @@ const Nav = styled(motion.nav)`
   position: fixed;
   width: 100%;
   top: 0;
-  background-color: black;
   font-size: 14px;
   padding: 20px 60px;
   color: white;
@@ -99,13 +98,49 @@ const logoVariants = {
   },
 }
 
+const navVariants = {
+  top: {
+    backgroundColor:"rgba(0,0,0,0)"
+  },
+  scroll: {
+    backgroundColor:"rgba(0,0,0,1)"
+  }
+}
+
 function Header () {
   const homeMatch = useMatch("/");
   const tvMatch = useMatch("/tv");
   const [searchOpen, setSearchOpen] = useState(false);
-  const toggleSearch = () => setSearchOpen(prev => !prev);
+  const inputAnimation = useAnimation();
+  const navAnimation = useAnimation();
+  const {scrollY} = useScroll();
+  useEffect(() => {
+    scrollY.onChange(()=> {
+      if(scrollY.get() > 80){
+        navAnimation.start("scroll");
+      } else {
+        navAnimation.start("top");
+      }
+    });
+  }, [scrollY,navAnimation]);
+  const toggleSearch = () => {
+    if(searchOpen){
+      inputAnimation.start({
+        scaleX:0
+      });
+    }else{
+      inputAnimation.start({
+        scaleX:1
+      });
+    }
+    setSearchOpen(prev => !prev)
+  };
   return (
-    <Nav>
+    <Nav
+      variants={navVariants}
+      animate={navAnimation}
+      initial={"top"}
+    >
       <Col>
         <Logo
           variants={logoVariants}
@@ -154,7 +189,8 @@ function Header () {
             ></path>
           </motion.svg>
           <Input
-            animate={{ scaleX: searchOpen ? 1 : 0 }}
+            animate={inputAnimation}
+            initial={{scaleX:0}}
             transition={{type: "linear"}}
             placeholder="Search for Movie or TV show..."
           />
