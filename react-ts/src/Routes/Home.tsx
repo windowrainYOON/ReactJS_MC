@@ -24,6 +24,7 @@ const Banner = styled.div<{bgPhoto:string}>`
   padding: 60px;
   background-image: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,1)), url(${props=>props.bgPhoto});
   background-size: cover;
+  background-position: center;
 `;
 
 const Title = styled.h1`
@@ -54,6 +55,29 @@ const Box = styled(motion.div)<{bgPhoto:string}>`
   background-image: url(${props=> props.bgPhoto});
   background-size: cover;
   background-position: center center;
+  height: 200px;
+  font-size: 66px;
+  position: relative;
+  &:first-child {
+    transform-origin: center left;
+  }
+  &:last-child {
+    transform-origin: center right;
+  }
+`;
+
+const Info = styled(motion.div)`
+  padding: 10px;
+  background-color: ${props => props.theme.black.lighter};
+  opacity: 1;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  z-index: 100;
+  h4 {
+    text-align: center;
+    font-size: 18px;
+  }
 `;
 
 const rowVariants = {
@@ -67,6 +91,33 @@ const rowVariants = {
     x: -window.outerWidth - 5,
   },
 };
+
+const BoxVariants = {
+  normal:{
+    scale:1,
+  },
+  hover:{
+    zIndex:99,
+    scale:1.3,
+    y:-80,
+    transition: {
+      delay:0.5,
+      duration:0.3,
+      type:"tween",
+    }
+  }
+}
+
+const InfoVariants = {
+  hover:{
+    opacity:1,
+    transition: {
+      delay:0.5,
+      duration: 0.1,
+      type:"tween",
+    }
+  }
+}
 
 const offset = 6;
 
@@ -112,8 +163,19 @@ function Home () {
                 {data?.results.slice(1).slice(offset*index, offset*index + offset).map(movie => 
                   <Box 
                     key={movie.id}
+                    variants={BoxVariants}
+                    whileHover="hover"
+                    initial="normal"
+                    transition={{type:"tween"}}
                     bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
-                  />)}
+                  >
+                    <Info
+                      variants={InfoVariants}
+                    >
+                      <h4>{movie.title}</h4>
+                    </Info>
+                  </Box>
+                  )}
               </Row>
             </AnimatePresence>
           </Slider>
