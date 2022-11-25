@@ -9,6 +9,7 @@ import { makeImagePath } from "../utils";
 const Wrapper = styled.div`
   background: black;
   padding-bottom: 200px;
+  overflow: hidden;
 `;
 
 const Loader = styled.div`
